@@ -18,7 +18,9 @@ admin.initializeApp({
 
 // Define the bucket
 const bucket = admin.storage().bucket();
-const destination = `backups/${path.basename(backupFilePath)}`; // Firebase Storage path
+const destination = `${process.env.FIREBASE_FOLDER}/backup/${path.basename(
+  backupFilePath
+)}`; // Firebase Storage path
 
 // Upload file to Firebase Storage
 bucket
