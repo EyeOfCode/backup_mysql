@@ -1,5 +1,4 @@
 #!/bin/bash
-chmod -x
 
 # Load environment variables from .env file
 source .env
@@ -8,7 +7,7 @@ source .env
 DATE=$(date +"%Y%m%d%H%M%S")
 
 # Create backup
-mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/${DB_NAME}_backup_$DATE.sql
+mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/${DB_NAME}_backup_$DATE.sql
 
 # Optional: Remove backups older than 7 days
 find $BACKUP_DIR -type f -name "*.sql" -mtime +7 -exec rm {} \;
