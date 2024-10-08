@@ -14,7 +14,7 @@ COPY . /usr/src/app/
 RUN chmod +x /usr/src/app/
 
 # Add the cron job
-RUN echo "0 3 * * * /usr/src/app/script.sh >> /var/log/cron.log 2>&1" > /etc/crontabs/root
+RUN echo "0 0 * * 0 /usr/src/app/script.sh >> /var/log/cron.log 2>&1" > /etc/crontabs/root
 
 # Create the log file for cron output
 RUN touch /var/log/cron.log
