@@ -1,33 +1,23 @@
-# Use a base image with bash and mysql client
-FROM mysql:5.7
+# Use Alpine as the base image
+FROM alpine:latest
 
-# Install Node.js and cron
-RUN apt-get update && apt-get install -y nodejs npm cron
+# Install cron, bash, curl, and Node.js
+RUN apk add --no-cache bash curl mysql-client nodejs npm
 
-# Set the working directory
-WORKDIR /app
+# Create a directory for the backup script
+WORKDIR /usr/src/app
 
-# Copy your backup script and upload.js to the container
-COPY backup.sh .
-COPY upload.js .
+# Copy the backup script, .env file, and upload.js
+COPY . /usr/src/app/
 
-# Copy your .env file
-COPY .env .
+# Make the script executable
+RUN chmod +x /usr/src/app/
 
-# Give execution permission to the backup script
-RUN chmod +x backup.sh
+# Add the cron job
+RUN echo "0 3 * * * /usr/src/app/script.sh >> /var/log/cron.log 2>&1" > /etc/crontabs/root
 
-# Create a cron job
-RUN echo "0 3 * * * /app/backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/backup-cron
-
-# Give cron job the right permissions
-RUN chmod 0644 /etc/cron.d/backup-cron
-
-# Apply cron job
-RUN crontab /etc/cron.d/backup-cron
-
-# Create the log file to be able to run the tail command
+# Create the log file for cron output
 RUN touch /var/log/cron.log
 
-# Start cron and your application
-CMD cron && tail -f /var/log/cron.log
+# Start cron
+CMD ["crond", "-f"]
